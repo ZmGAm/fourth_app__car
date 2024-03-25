@@ -1,6 +1,7 @@
-import React, { useState,useEffect,Input } from 'react';
-import  Maps  from "./Maps";
+import React, { useState,useEffect,Input, useContext } from 'react';
+// import  Maps  from "./Maps";
 import  Locationsearch  from "./Locationsearch";
+// import { SourceContext } from './Locationsearch';
 // import  Map  from "./GetCoordinate";
 // import GoogleMap from './GoogleMap';
 // import Map_with_Box from './Map_with_Box';
@@ -22,13 +23,23 @@ import './design/home.css';
 // import seat from './icon/seat.png'
 // https://maps.googleapis.com/maps/api/staticmap?center=40.714728,-73.998672&zoom=12&size=400x400&key=AIzaSyC8arsGuaqOBNIqoDrS5_Do12RzK0ZhK_c
 import cars_content from './cars_content';
+// import  SourceContext  from './Context/SourceContext';
+// import  DestinationContext  from './Context/DestinationContext';
+// import DestinationContext from './Context/DestinationContext';
+// import SourceContext from './Context/SourceContext';
 // import REACT_APP_FOURTH_API_KEY from './.env.local'
 // const map_api_key=AIzaSyC8arsGuaqOBNIqoDrS5_Do12RzK0ZhK_c;
+import {DestinationContext} from './Context/DestinationContext';
+import {SourceContext} from './Context/SourceContext';
+
 const Home = () => {
   // const [count, setCount] = useStsate(0);
   // const [hide, setHide] = useState("shown");
   const [isVisible, setIsVisible] = useState(true);
   const [width, setWidth] = useState(310);
+  // const source= useContext(SourceContext);
+  const {destination, setDestination} = useContext(DestinationContext);
+  const {source, setSource} = useContext(SourceContext);
   const [bottomwidth, setBottomWidth] = useState(23);
   const [height, setHeight] = useState(150);
   const [bottomheight, setBottomHeight] = useState(10);
@@ -72,7 +83,7 @@ const Home = () => {
                                                         
                                                         <Locationsearch type='Source'/>
                                                         <Locationsearch type='destination'/>
-                                                      
+                                                      <h1>source :{source.name}</h1>
 
                                                         <div style={{width}} className="div-for-cars">
     

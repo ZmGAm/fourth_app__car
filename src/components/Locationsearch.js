@@ -1,10 +1,20 @@
 /* global google */
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
+// import { SourceContext,DestinationContext } from './Context/Context';
+// import { DestinationContext } from './Context/DestinationContext';
+// import DestinationContext from './Context/DestinationContext';
+// import SourceContext from './Context/SourceContext';
+import {DestinationContext} from './Context/DestinationContext';
+import {SourceContext} from './Context/SourceContext';
+
+
 
 function Locationsearch({ type }) {
   const [searchValue, setSearchValue] = useState(null);
   const [placeholder, setPlaceholder] = useState(null);
+  const { setDestination} = useContext(DestinationContext);
+  const {setSource} = useContext(SourceContext);
  const PLACES_API='AIzaSyAoJwUr3rjwlC4FgP7eDnU6OpvQkzmCj-8'
   useEffect(() => {
     setPlaceholder(type === 'Source' ? 'Pickup Location ' : 'Dropoff Location ');
@@ -15,31 +25,55 @@ function Locationsearch({ type }) {
     const services = new google.maps.places.PlacesService(document.createElement('div'));
     services.getDetails({ placeId }, (place, status) => {
       if (status === 'OK' && place.geometry && place.geometry.location) {
+              
+        if(type==='Source'){
 
-        console.log('lng',place.geometry.location.lng());
-        console.log('lat',place.geometry.location.lat());
+            setSource({
+              
+              lat:place.geometry.location.lat(),
+              lng:place.geometry.location.lng(),
+              name:place.formatted_address,
+              label:place.name
+            })
+          }
+          else{
+            setDestination({
+              
+              lat:place.geometry.location.lat(),
+              lng:place.geometry.location.lng(),
+              name:place.formatted_address,
+              label:place.name
+            })
+            
+          }
+          // console.log('source',source.lat);
+          // console.log('destination',destination.lng);
+
       }
     });
   };
+  console.log('lat',SourceContext);
 
   return (
-    <div className='locationsearch'>
-      <GooglePlacesAutocomplete
-        apiKey={PLACES_API}
-        selectProps={{
-          value: searchValue,
-          onChange: (place) => {
-            GetCoordinate(place, type);
-            setSearchValue(place);
-          },
-          placeholder: placeholder,
-          components: {
-            DropdownIndicator: false,
-          },
-        }}
-      />
-    </div>
+    
+      <div className='locationsearch'>
+        <GooglePlacesAutocomplete
+          apiKey={PLACES_API}
+          selectProps={{
+            value: searchValue,
+            onChange: (place) => {
+              GetCoordinate(place, type);
+              setSearchValue(place);
+            },
+            placeholder: placeholder,
+            components: {
+              DropdownIndicator: false,
+            },
+          }}
+        />
+      </div>
   );
 }
 
 export default Locationsearch;
+
