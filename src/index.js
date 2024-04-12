@@ -3,11 +3,22 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-
+import ContextProvider from './components/Context/ContextProvider';
+import{LoadScript} from'@react-google-maps/api';
+// import ContextProvider from './components/Context/GoogleWraper';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
+
   <React.StrictMode>
-    <App />
+          <ContextProvider>
+            <LoadScript
+             googleMapsApiKey='AIzaSyAoJwUr3rjwlC4FgP7eDnU6OpvQkzmCj-8'
+             libraries={['places']}
+            >
+                <App />
+            </LoadScript>
+          </ContextProvider>
+      
   </React.StrictMode>
 );
 

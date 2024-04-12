@@ -12,7 +12,7 @@ import  Locationsearch  from "./Locationsearch";
 
 // import  SecondMap  from "./SecondMap";
 import './design/home.css';
-
+// import ContextProvider from './Context/ContextProvider';
 // import img1 from './design/images/HD-wallpaper-suzuki-swift-2017-glx-turbo-new-red-swift-h_002.jpg'
 // import img2 from './design/images/gmain.jpg'
 // import air from './icon/air.png'
@@ -31,6 +31,9 @@ import cars_content from './cars_content';
 // const map_api_key=AIzaSyC8arsGuaqOBNIqoDrS5_Do12RzK0ZhK_c;
 import {DestinationContext} from './Context/DestinationContext';
 import {SourceContext} from './Context/SourceContext';
+import GoogleMapNew from './GoogleMapNew';
+import { object } from 'yup';
+// import GoogleMap from './GoogleMap';
 
 const Home = () => {
   // const [count, setCount] = useStsate(0);
@@ -38,8 +41,8 @@ const Home = () => {
   const [isVisible, setIsVisible] = useState(true);
   const [width, setWidth] = useState(310);
   // const source= useContext(SourceContext);
-  const {destination, setDestination} = useContext(DestinationContext);
-  const {source, setSource} = useContext(SourceContext);
+  const { destination,setDestination} = useContext(DestinationContext);
+  const {source,setSource} = useContext(SourceContext);
   const [bottomwidth, setBottomWidth] = useState(23);
   const [height, setHeight] = useState(150);
   const [bottomheight, setBottomHeight] = useState(10);
@@ -73,8 +76,25 @@ const Home = () => {
         setBottomWidth(bottomwidth);
       
     }
+    // console.log("source",destination)
 
+    useEffect(() => {
+      // setPlaceholder(type === 'Source' ? 'Pickup Location ' : 'Dropoff Location ');
+      if(destination){
+
+        console.log("destinaion",destination.name)
+      }
+      if(source){
+        
+        // console.log("destinaion",destination.name)
+        console.log("source",source.name)
+      }
+    }, [source,destination]);
+    // console.log("source in home ",source)
+    // console.log("destinaion in home",destination)
+    
     return<>
+    
 
     <div className='all'>
     
@@ -83,7 +103,23 @@ const Home = () => {
                                                         
                                                         <Locationsearch type='Source'/>
                                                         <Locationsearch type='destination'/>
-                                                      <h1>source :{source.name}</h1>
+                                                        {source!=null?
+                                                         <h17>source:{source.label}</h17>
+                                                         :null}
+                                                       
+                                                      {/* <div>
+                                                        {source!=null?
+                                                          Object.values(source).map((elem)=>{
+                                                            // const{label}=elem;
+                                                            return(
+                                                              <div>
+                                                                <h1>source:{elem.label}</h1>
+                                                              </div>
+                                                            )
+                                                          })
+                                                          :null
+                                                        }
+                                                      </div> */}
 
                                                         <div style={{width}} className="div-for-cars">
     
@@ -243,6 +279,8 @@ const Home = () => {
                                                           {/* <Map/> */}
                                                           {/* <MapComponent/> */}
                                                           {/* <Map/> */}
+                                                          <GoogleMapNew/>
+
                                                           {/* <Pokemon/> */}
                                                           {/* <MapWithDirections/> */}
                                                           {/* <SecondMap/> */}
@@ -253,6 +291,7 @@ const Home = () => {
                 </div>
 
    </div>
+   {/* </ContextProvider> */}
   </>
 }
   
