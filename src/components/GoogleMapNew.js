@@ -1,28 +1,28 @@
-"use client";
+// "use client";
 import React, { useState, useEffect, useContext } from "react";
 import {
   GoogleMap,
-  useJsApiLoader,
-  useLoadScript,
   MarkerF,
   OverlayViewF,
   OverlayView,
+  DirectionsRenderer,
 } from "@react-google-maps/api";
 import { DestinationContext } from "./Context/DestinationContext";
 import { SourceContext } from "./Context/SourceContext";
-import { Marker } from "react-map-gl";
+// import { Marker } from "react-map-gl";
 
 const containerStyle = {
   width: "100%",
   height: window.innerWidth * 0.45,
 };
-
+// const google = window.google;
+// const google = window.google = window.google ? window.google : {};
 function GoogleMapNew() {
   // const apikey=process.env.REACT_APP_GOOGLE_API_KEY
   // const apikey=process.env.REACT_APP_NEXT_PUBLIC_GOOGLE_API_KEY
 
-  const { destination, setDestination } = useContext(DestinationContext);
-  const { source, setSource } = useContext(SourceContext);
+  const { destination } = useContext(DestinationContext);
+  const { source } = useContext(SourceContext);
 
   const [center, setCenter] = useState({
     lat: -3.745,
@@ -36,6 +36,7 @@ function GoogleMapNew() {
   //   })
 
   const [map, setMap] = React.useState(null);
+  const [directionpoint, setDirectionpoint] = React.useState({});
 
   const onLoad = React.useCallback(
     function callback(map) {
@@ -51,6 +52,7 @@ function GoogleMapNew() {
   const onUnmount = React.useCallback(function callback(map) {
     setMap(null);
   }, []);
+  
   useEffect(() => {
     // setPlaceholder(type === 'Source' ? 'Pickup Location ' : 'Dropoff Location ');
     if (source != null && map) {
@@ -59,37 +61,111 @@ function GoogleMapNew() {
         lng: source.lng,
       });
     }
-    // if(destination){
-
-    // }
-    // console.log("destinaion",destination.name)
-
-    // if(source){
-
-    //   // console.log("destinaion",destination.name)
-    //   console.log("source",source.name)
-    // }
+  
   }, [source]);
 
   useEffect(() => {
     // setPlaceholder(type === 'Source' ? 'Pickup Location ' : 'Dropoff Location ');
-    if (destination != [] && map) {
+    if (destination !=null && map) {
       setCenter({
         lat: destination.lat,
         lng: destination.lng,
       });
     }
-    // if(destination){
-
-    // }
-    // console.log("destinaion",destination.name)
-
-    // if(source){
-
-    //   // console.log("destinaion",destination.name)
-    //   console.log("source",source.name)
-    // }
   }, [destination]);
+ 
+  // const directionRoute=()=>{
+
+  //   const DirectionsService=new window.google.maps.DirectionsService();
+  //   DirectionsService.route({
+  //     origin:{lat:source.lat,lng:source.lng},
+  //     destination:{lat:destination.lat,lng:destination.lng},
+  //     travelMode:window.google.maps.TravelMode.DRIVING
+  //   },(result,Status)=>{
+  //     console.log("direction status",Status)
+  //     // console.log("direction google status",window.google.maps.DirectionsService.OK)
+  //     if(Status==='OK'){
+  //       setDirectionpoint(result)
+  //         console.log("direction result",result)
+  //         console.log("direction point",directionpoint)
+  //     }
+  //     else{
+  //       console.error('Error');
+  //     }
+  //   })
+  // }
+  // const directionRoute = () => {
+  //   const DirectionsService = new window.google.maps.DirectionsService();
+  //   DirectionsService.route(
+  //     {
+  //       origin: new window.google.maps.LatLng(source.lat, source.lng),
+  //       destination: new window.google.maps.LatLng(destination.lat, destination.lng),
+  //       travelMode: window.google.maps.TravelMode.DRIVING
+  //     },
+  //     (result, status) => {
+  //       console.log("Direction Status:", status);
+  //       if (status === window.google.maps.DirectionsStatus.OK) {
+  //         console.log("Direction Result:", result);
+  //         setDirectionpoint(result);
+  //         console.log("Direction point Result:", directionpoint);
+  //         console.log("google Result:", window.google);
+
+  //       } else {
+  //         console.error('Error:', status);
+  //       }
+  //     }
+  //   );
+    
+  // };
+
+  const directionRoute = () => {
+    const DirectionsService = new window.google.maps.DirectionsService();
+    // const DirectionsRenderer=new window.google.maps.DirectionsRenderer();
+    if (source && destination) { 
+    DirectionsService.route(
+      {
+        origin: new window.google.maps.LatLng(source.lat, source.lng), // Create LatLng object for origin
+        destination: new window.google.maps.LatLng(destination.lat, destination.lng), // Create LatLng object for destination
+        travelMode: window.google.maps.TravelMode.DRIVING,
+        provideRouteAlternatives:true,
+      },
+      (result, status) => {
+        console.log("Direction Status:", status);
+        if (status === window.google.maps.DirectionsStatus.OK) {
+          console.log("Direction Result:", result);
+          // DirectionsRenderer.setDirections(result);
+          setDirectionpoint(result);
+        } else {
+          console.error('Error:', status);
+        }
+      }
+    );
+  }
+  }
+  
+  useEffect(() => {
+    if (source || destination) {
+      directionRoute();
+    }
+  }, [source, destination]);
+  useEffect(() => {
+    console.log("Direction point Result:", directionpoint);
+  }, [directionpoint]);  
+  useEffect(() => {
+    if (map && directionpoint) {
+      const directionsRenderer = new window.google.maps.DirectionsRenderer({ map });
+      directionsRenderer.setDirections(directionpoint);
+      directionsRenderer.setOptions({
+        suppressMarkers: true, // Disable default route markers
+        polylineOptions: {
+          strokeColor: "#000000", // Set route color to blue
+          strokeWeight: 4, // Adjust route line thickness
+          strokeOpacity: 0.5, // Set route opacity
+        },})
+      
+    }
+  }, [map, directionpoint]);
+  
   return (
     <GoogleMap
       mapContainerStyle={containerStyle}
@@ -106,10 +182,9 @@ function GoogleMapNew() {
             mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
           >
             
-              <h style={{color:"red",fontsize:"20px"}}> {source.label}</h>
+              <h style={{color:"red" ,background:"white",fontsize:"20px"}}> {source.label}</h>
           
           </OverlayViewF>
-          {/* <h17> source in marker :{source.label}</h17> */}
         </MarkerF>
        ): null}
        {destination != null ? (
@@ -119,16 +194,11 @@ function GoogleMapNew() {
             position={{ lat: destination.lat, lng: destination.lng }}
             mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
           >
-            
-              <h style={{color:"red",fontsize:"20px"}}>{destination.label}</h>
-          
+              <h style={{color:"red" ,background:"white",fontsize:"20px"}}>{destination.label}</h>
           </OverlayViewF>
-          {/* <h17> source in marker :{source.label}</h17> */}
         </MarkerF>
        ): null}
 
-
-      {/* Child components, such as markers, info windows, etc. */}
       <></>
     </GoogleMap>
   );

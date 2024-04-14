@@ -13,7 +13,7 @@ root.render(
           <ContextProvider>
             <LoadScript
              googleMapsApiKey='AIzaSyAoJwUr3rjwlC4FgP7eDnU6OpvQkzmCj-8'
-             libraries={['places']}
+             libraries={['places','directions']}
             >
                 <App />
             </LoadScript>
